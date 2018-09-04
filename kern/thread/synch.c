@@ -158,6 +158,12 @@ lock_create(const char *name)
 
 	// add stuff here as needed
 
+	spinlock_init(&lock->lk_spinlock);
+	lock->lk_thread = NULL;
+	lock->lk_wchan = wchan_create(lock->lk_name);
+
+	
+
 	return lock;
 }
 
@@ -168,6 +174,7 @@ lock_destroy(struct lock *lock)
 
 	// add stuff here as needed
 
+	kfree(lock->lk_wchan);
 	kfree(lock->lk_name);
 	kfree(lock);
 }
@@ -201,10 +208,12 @@ bool
 lock_do_i_hold(struct lock *lock)
 {
 	// Write this
+//	(void)lock;  // suppress warning until code gets written
 
-	(void)lock;  // suppress warning until code gets written
+//	return true; // dummy until code gets written
+	KASSERT(curthread != NULL);
+	return (lock->lk_thread == curthread);
 
-	return true; // dummy until code gets written
 }
 
 ////////////////////////////////////////////////////////////
